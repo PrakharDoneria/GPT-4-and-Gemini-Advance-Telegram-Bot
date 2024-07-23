@@ -152,6 +152,15 @@ bot.command('gpt', (ctx) => {
   }
 });
 
+bot.command('download', async (ctx) => {
+  try {
+    await ctx.reply('You can download the app from the following link: http://t.me/gpt4ngemini_bot/app');
+  } catch (error) {
+    console.error('Error in /download command:', error);
+    await ctx.reply('An error occurred while handling your /download request. Please try again.');
+  }
+});
+
 try {
   bot.launch();
 } catch (error) {
