@@ -2,12 +2,12 @@ require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-try {
-  mongoose.connect(process.env.MONGODB_URI);
-} catch (error) {
-  console.error('Error connecting to MongoDB:', error);
-}
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(error => console.error('Error connecting to MongoDB:', error));
 
 const UserSchema = new mongoose.Schema({
   userId: { type: Number, unique: true },
@@ -18,6 +18,13 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+const app = express();
+app.use(bodyParser.json());
+
+app.get('/', (req, res) => {
+  res.send('working');
+});
 
 const helpMessage = `
 Welcome to the AI Bot! Follow these steps to get started:
@@ -33,9 +40,12 @@ Welcome to the AI Bot! Follow these steps to get started:
    /gemini {your prompt}
    /gpt {your prompt}
 
+4. For downloading the app, use the /download command.
+
 Examples:
    /gemini Tell me a joke
-   /gpt What is the capital of India?
+   /gpt What is the capital of France?
+   /download
 
 If you encounter any issues, please ensure your API key is valid and you haven't exceeded your daily limit.
 `;
@@ -161,8 +171,10 @@ bot.command('download', async (ctx) => {
   }
 });
 
-try {
-  bot.launch();
-} catch (error) {
-  console.error('Error launching the bot:', error);
-}
+bot.launch()
+  .then(() => console.log('Bot started'))
+  .catch(error => console.error('Error launching the bot:', error));
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server is running');
+});
