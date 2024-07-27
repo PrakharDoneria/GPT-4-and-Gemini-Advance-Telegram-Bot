@@ -155,7 +155,7 @@ bot.command('gemini', (ctx) => {
 bot.command('gpt', (ctx) => {
   try {
     const prompt = ctx.message.text.split(' ').slice(1).join(' ');
-    handleApiRequest(ctx, 'gpt/4', prompt);
+    handleApiRequest(ctx, 'gpt4', prompt);
   } catch (error) {
     console.error('Error in /gpt command:', error);
     ctx.reply('An error occurred while handling your /gpt command. Please try again.');
